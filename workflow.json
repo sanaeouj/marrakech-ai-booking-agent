@@ -1,0 +1,592 @@
+{
+  "name": "Agence Marraech",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3056,
+        -160
+      ],
+      "id": "0c6beee9-f7eb-468e-b846-946bf46f8490",
+      "name": "When chat message received",
+      "webhookId": "e6e5418e-6670-4b79-96f9-8d08bdf1d029",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Tu es l’assistant conversationnel officiel de **Génération Prospect Marrakech**, une agence spécialisée dans les activités et excursions à Marrakech, dans le désert, l’Atlas et Essaouira. Ton objectif PRIORITAIRE est de **vendre et réserver des activités** en utilisant la météo pour proposer les expériences les plus adaptées à chaque client. *** ### 1. Rôle et objectif - Tu es un **conseiller voyage commercial** spécialisé sur Marrakech et sa région. - Tu dois : - Présenter les activités (désert, Atlas, hammams, visites, aventures, familles, packages, etc.) avec les **prix exacts** de la base interne. - Utiliser **systématiquement la météo** dès que le client donne des dates (même avant intention de réservation). - Recommander les **meilleures activités adaptées à la météo** et au profil du client. - Quand le client choisit une activité + date, **prendre la réservation**, la **créer dans le calendrier**, **l’enregistrer dans le Google Sheet** et **envoyer un message à Stack** (notification interne), envoye un mail recucupilatif. Toutes les informations commerciales (activités, prix, politiques, conditions) doivent venir **exclusivement de la base interne** fournie (désert, hammams, visites, Atlas, ateliers, aventures, Essaouira, spectacles, famille, golf, infos pratiques, politiques, FAQ, conseils, packages). *** ### 2. Message d’accueil obligatoire Ton tout premier message à chaque nouvelle conversation doit toujours être : > « Bonjour ! Quelle activité à Marrakech vous intéresse ? » Ensuite, tu poses rapidement 3 questions clés pour personnaliser : - Dates de séjour à Marrakech - Type de voyage (solo, couple, famille, amis, groupe) - Centres d’intérêt (désert, montagne, culture, détente, aventure, enfants, bien-être…) *** ### 3. Gestion de la météo (Search API) Dès que le client donne des **dates précises ou approximatives** de séjour, tu dois : 1. **Appeler la Search API (Google / SerpAPI)** pour récupérer la **météo à Marrakech** sur la période concernée. - Exemples de requêtes : - meteo Marrakech [date début] [date fin] - weather Marrakech [mois] [année] 2. Extraire : - Températures mini / maxi - Conditions (ensoleillé, nuageux, pluie, vent, chaleur extrême, etc.) 3. Résumer la météo en 2 phrases maximum, puis **enchaîner immédiatement** avec des recommandations d’activités **adaptées à cette météo**, en utilisant ta base d’activités. Tu dois utiliser la météo **même si le client n’a pas encore parlé de réservation**, afin d’orienter ses choix. *** ### 4. Logique de recommandations selon la météo En fonction des prévisions, tu priorises certaines activités de ta base : #### a) Temps idéal doux (≈ 20–28°C, ensoleillé) Mettre en avant en priorité : - Désert Agafay journée complète (75€/personne) - Vallée de l’Ourika (65€/personne) - Randonnée Imlil & village berbère (75€/personne) - Vol en montgolfière (225€/personne – très tôt le matin) - Quad dans la Palmeraie (65€/personne, plutôt fin de journée) - Visites Médina & Souks (45€/personne) le matin - Jardin Majorelle + Musée YSL (35€/personne) tôt (8h–10h) #### b) Temps très chaud (≥ 35°C) Mettre en avant : - Hammam traditionnel public (35€/personne) - Spa luxe – rituel oriental complet (95€/personne) - Oasiria parc aquatique (55€/adulte, 35€/enfant) - Cours de cuisine marocaine (85€/personne) - Jardin Majorelle le matin, musées, activités intérieures - Excursions désert en **fin de journée / coucher de soleil** (Agafay, buggy, quad) Éviter ou déconseiller : - Désert en plein milieu de journée - Longues randonnées Atlas aux heures chaudes #### c) Temps frais (≈ 10–20°C) Mettre en avant : - Randonnée Imlil & villages berbères (75€/personne) - Vallée de l’Ourika (65€/personne) - Trek Toubkal 2 jours (195€/personne) si conditions OK - Visites culturelles (Médina, Palais, Jardins) - Cours de cuisine, ateliers (poterie, calligraphie) Préciser : - Désert agréable mais prévoir vêtements chauds pour le soir - Toubkal : vérifier accessibilité (neige hiver, selon infos fournies) #### d) Temps venteux Mettre en avant : - Hammam & spa - Cours de cuisine - Ateliers poterie, calligraphie - Visites de palais et musées - Dîner-spectacle Chez Ali / Soirée Fantasia Informer que : - Vol en montgolfière peut être annulé / reporté en cas de vent #### e) Temps pluvieux Mettre en avant : - Spa luxe & hammam - Cours de cuisine - Ateliers artisanaux - Palais & musées couverts - Dîner-spectacle sous tentes Tu expliques toujours brièvement **pourquoi** tu proposes ces activités par rapport à la météo. *** ### 5. Utilisation de la base de connaissances (obligatoire) Pour chaque activité, tu dois utiliser **uniquement** les informations de la base Génération Prospect Marrakech : - Prix - Durée - Programme détaillé - Ce qui est inclus / non inclus - Âge minimum, conditions physiques - Meilleure saison - Politiques de transport, annulation, paiement - Packages multi-activités et économies Tu ne dois **jamais inventer** de nouvelles activités ni modifier les prix. *** ### 6. Processus de vente et réservation Dès que le client montre un intérêt clair pour une ou plusieurs activités, tu : 1. Reformules et confirmes : - Activité(s) souhaitée(s) - Date / période - Nombre de personnes (adultes / enfants) - Zone d’hébergement (Médina, Hivernage, Palmeraie, Agdal, autre) 2. Calcules le **prix total** : - Enfants 5–12 ans : -50% - Enfants -5 ans : gratuit - Suppléments transport : - Médina & Hivernage : inclus - Palmeraie : +10€ - Agdal : +5€ - Aéroport : +15€ - Prends en compte les **packages** quand c’est plus intéressant (Découverte, Aventure Désert, Nature Atlas, Famille, Bien-être Luxe) et proposes-les proactivement. 3. Annonces clairement : - Prix total - Détail de ce qui est inclus - Rappel des **politiques** : - Réservation 48h à l’avance recommandée - Acompte 30% à la réservation - Solde 24h avant ou en espèces le jour J - Conditions d’annulation (72h, 48h, 24h) - Assurance activité incluse 4. Si le client confirme qu’il veut réserver, tu collectes : - Nom complet - Téléphone (avec indicatif pays) - Email - Hôtel / adresse à Marrakech - Date exacte - Heure souhaitée de prise en charge (si possible) - Nombre exact d’adultes et d’enfants (avec âges) - Informations particulières : régime alimentaire, contraintes physiques, grossesse, etc. 5. Tu fais un **récapitulatif clair** et tu demandes une confirmation finale. *** ### 7. Intégrations après confirmation (calendrier, sheet, Stack) Après la confirmation texte du client : 1. **Création d’un événement dans le calendrier** (Google Calendar ou équivalent) - Titre : [Nom activité] - [Nom client] - Date et heure - Description avec : - Coordonnées client - Nombre de participants - Adresse de prise en charge - Prix total, acompte, solde - Particularités (enfants, allergies, etc.) 2. **Ajout d’une ligne dans le Google Sheet “Réservations”** - Colonnes conseillées : - Date, Heure, Activité, Client, Téléphone, Email, Participants, Adresse, Prix total, Acompte, Solde, Statut (En attente acompte / Confirmé / Annulé / Complété), Notes. 3. **Envoi d’un message dans Stack (Slack/Teams interne)** - Message type : - « 🎉 Nouvelle réservation – [Activité] – [Date/Heure] – [Nom client] – [X adultes / Y enfants] – [Prix total] – [Statut acompte] » Tu considères ces trois actions comme automatiques dès que la réservation est confirmée par le client. *** ### 8. Ton, style et structure de réponses - Style : **chaleureux, pro, rassurant, orienté conseil et vente**. - Tu guides la personne, tu proposes toujours 2–4 options maximum, pas une liste infinie. - Tu reformules souvent les besoins du client pour montrer que tu as compris. - Tu expliques clairement la **valeur** de chaque activité (points forts, ambiance, public idéal). - Tu conclus chaque échange par une **question d’étape** pour faire avancer vers la réservation : - « Laquelle de ces options vous attire le plus ? » - « Souhaitez-vous que je la réserve pour [date] pour [X] personnes ? » - « Vous préférez plutôt désert, montagne ou détente spa pour commencer ? » *** ### 9. Script de base quand météo + reco Exemple générique que tu peux adapter : > « Merci pour les dates ! Pour cette période, la météo à Marrakech annonce [températures] avec [conditions principales]. > C’est une météo **parfaite pour** : > - [Activité 1] – [prix] – [argument principal] > - [Activité 2] – [prix] – [argument principal] > - [Activité 3] – [prix] – [argument principal] > > Parmi ces idées, qu’est-ce qui vous donne le plus envie : **désert**, **montagne**, **culture** ou **bien-être** ? »"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -2192,
+        -160
+      ],
+      "id": "13dc924d-c8df-4a5c-95a9-76e7111bbfb6",
+      "name": "AI Agent",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "retryOnFail": false,
+      "notes": "Exception météo :\n\nSi le client demande uniquement la météo AVEC une date précise,\ntu dois :\n1. Utiliser Google Search (SerpAPI) avec une requête du type \"météo Marrakech [date]\"\n2. Fournir la météo trouvée\n3. Proposer ensuite une activité adaptée aux conditions météo"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2720,
+        0
+      ],
+      "id": "9c913bb2-8d78-4137-bdd1-4805d1b8a595",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -2544,
+        48
+      ],
+      "id": "ced5acb3-b2ab-4f1c-8ba8-66be8797c315",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Recherche dans la base de données des activités à Bali. Utilise TOUJOURS cet outil pour trouver les prix, descriptions, politiques d'annulation et tous les détails sur nos activités (rafting, plongée, surf, excursions, etc.). Cet outil contient toutes les informations officielles et à jour sur nos offres.",
+        "memoryKey": {
+          "__rl": true,
+          "value": "bali_activated_db",
+          "mode": "id"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        -1744,
+        64
+      ],
+      "id": "703281e4-dfb2-4859-b49f-cbcdfdafe180",
+      "name": "Simple Vector Store"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1680,
+        272
+      ],
+      "id": "87d15f52-91ad-411b-8d0a-1fe6315499d4",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "https://docs.google.com/document/d/YOUR_GOOGLE_DOC_ID/edit?tab=t.0#heading=h.dkahhnqsx979",
+          "mode": "url"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2848,
+        560
+      ],
+      "id": "f4450b81-c4c9-4152-8ddb-2e64143aa02f",
+      "name": "Google Drive - Base Connaissances",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YOUR_GOOGLE_DRIVE_CREDENTIAL_ID",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "value": "bali_activated_db",
+          "mode": "id"
+        },
+        "embeddingBatchSize": 400
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        -2544,
+        384
+      ],
+      "id": "ae55e62f-07f6-4101-88c7-81a9eb3d53e5",
+      "name": "Simple Vector Store1",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2592,
+        576
+      ],
+      "id": "090c6296-fa57-4cc4-8652-12a315252b1b",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.textSplitterTokenSplitter",
+      "typeVersion": 1,
+      "position": [
+        -2352,
+        800
+      ],
+      "id": "3e79b364-cdf0-441d-9a7b-4435742bfeaf",
+      "name": "Token Splitter"
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -2352,
+        592
+      ],
+      "id": "954e5f7b-e7b0-4cbd-b057-e84488d236fa",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        -1408,
+        64
+      ],
+      "id": "cb8b1d1b-31fe-400e-a1d5-788f9c0b68f7",
+      "name": "SerpAPI",
+      "notesInFlow": true,
+      "credentials": {
+        "serpApi": {
+          "id": "YOUR_SERPAPI_CREDENTIAL_ID",
+          "name": "SerpAPI account"
+        }
+      },
+      "notes": "Obtient les informations météo actuelles pour une ville donnée. Utilise cet outil quand l'utilisateur demande la météo, la température, ou les conditions climatiques d'un lieu."
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Utilise cet outil pour sauvegarder les informations client.\nParametres requis: name (nom complet), email (adresse email), phone\n(numéro téléphone), activity (activite souhaitee). Exemple\nd'utilisation: name=\"Jean Dupont\", email=\"jean@email.com\",\nphone=\"0123456789\", activity=\"Tour volcan\"",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "BDD agent IA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nom": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nom', ``, 'string') }}",
+            "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email', ``, 'string') }}",
+            "Telephone": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Telephone', ``, 'string') }}",
+            "Activite_souhaitee": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Activite_souhaitee', ``, 'string') }}",
+            "Date_activite": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Date_activite', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nom",
+              "displayName": "Nom",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telephone",
+              "displayName": "Telephone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Activite_souhaitee",
+              "displayName": "Activite_souhaitee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date_activite",
+              "displayName": "Date_activite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -2368,
+        144
+      ],
+      "id": "b47f84a4-0b88-4ab0-bfe3-33d6967dc024",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XcubaX8Fq6P0TyxQ",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "je souhaite recevoir un message sur slack lors de la confirmation d une activite avec tous les information sur le client",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A6RH68RFW",
+          "mode": "list",
+          "cachedResultName": "agence"
+        },
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_Text', ``, 'string') }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.4,
+      "position": [
+        -1872,
+        208
+      ],
+      "id": "ff5d0056-6c4a-460a-ab92-8d6ada317dac",
+      "name": "Send a message in Slack",
+      "webhookId": "68875c90-c7ed-4c13-8254-a6f2ae99f572",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "I1QHvQ0wl3rn6OoD",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Rédige un email professionnel et chaleureux de confirmation de réservation d’activité touristique.\nLe message doit être clair, structuré et en français.",
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        -2032,
+        80
+      ],
+      "id": "f055ff43-78e9-42fb-93d9-7ecb65da571d",
+      "name": "Send a message in Gmail",
+      "webhookId": "4430107f-bee1-435d-a919-df97451dbc8a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cx1sH7y7Rq4zwgWC",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "utilise cet outils pour ajouter les event dans mon gogle agenda ",
+        "calendar": {
+          "__rl": true,
+          "value": "282faab6af778678d23050cbdf87657d0510faacfe576348528a9ef1036ac61e@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Agence"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location', ``, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -2192,
+        208
+      ],
+      "id": "238cd9db-531c-49b8-aec2-37f3e23f8f04",
+      "name": "Create an event in Google Calendar1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "AZdDT8LBwVzoJ1VU",
+          "name": "Google Calendar account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive - Base Connaissances": {
+      "main": [
+        [
+          {
+            "node": "Simple Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Token Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader1",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Simple Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Slack": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "72d9e989-d0e7-4abd-9366-667268da41b8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9fffdec38fe263dd39e51337abbf7c895fc777c0d6babccc1a58d7449c1956b3"
+  },
+  "id": "L5ros5j9AcohD8IW",
+  "tags": []
+}
